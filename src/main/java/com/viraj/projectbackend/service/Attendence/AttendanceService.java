@@ -1,4 +1,4 @@
-package com.viraj.projectbackend.service;
+package com.viraj.projectbackend.service.Attendence;
 
 import com.viraj.projectbackend.Repo.Attendence.AttendanceLogRepository;
 import com.viraj.projectbackend.model.Attendence.AttendanceLog;

@@ -1,7 +1,5 @@
 package com.viraj.projectbackend.model.Subject;
 
-
-
 import com.viraj.projectbackend.model.Attendence.AttendanceLog;
 import jakarta.persistence.*;
 import lombok.*;
@@ -42,9 +40,11 @@ public class Subject {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "subject",
+    @OneToMany(
+            mappedBy = "subject",
             cascade = CascadeType.ALL,
-            orphanRemoval = true)
+            orphanRemoval = true
+    )
     private List<AttendanceLog> attendanceLogs;
 
     @PrePersist

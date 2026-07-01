@@ -1,17 +1,12 @@
 package com.viraj.projectbackend.model.Attendence;
 
-
-
-
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.viraj.projectbackend.model.Subject.Subject;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "attendance_logs")
@@ -36,9 +31,9 @@ public class AttendanceLog {
     @Column(length = 500)
     private String notes;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "subject_id", nullable = false)
-    @JsonIgnore
+    @JsonIgnoreProperties("attendanceLogs")
     private Subject subject;
 
     @Column(name = "created_at", updatable = false)
@@ -49,4 +44,3 @@ public class AttendanceLog {
         createdAt = LocalDateTime.now();
     }
 }
-
