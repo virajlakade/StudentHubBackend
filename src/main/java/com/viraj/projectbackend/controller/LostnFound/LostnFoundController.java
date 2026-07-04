@@ -7,22 +7,31 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/lostnfound")
+@RequestMapping("/api/lostfound")
 @CrossOrigin(origins = "http://localhost:5173")
 public class LostnFoundController {
-    private LostFoundService lostFoundService;
+
+    private final LostFoundService lostFoundService;
+
+    public LostnFoundController(LostFoundService lostFoundService) {
+        this.lostFoundService = lostFoundService;
+    }
+
+    @GetMapping
+    public List<LostFound> getAllItems() {
+        return lostFoundService.getAllLostFoundItems();
+    }
+
     @GetMapping("/{id}")
     public LostFound getById(@PathVariable Long id) {
         return lostFoundService.getById(id);
     }
 
-    // Add new item
     @PostMapping
     public LostFound addLostFound(@RequestBody LostFound lostFound) {
         return lostFoundService.addLostFound(lostFound);
     }
 
-    // Update item
     @PutMapping("/{id}")
     public LostFound updateLostFound(
             @PathVariable Long id,
@@ -31,7 +40,6 @@ public class LostnFoundController {
         return lostFoundService.updateLostFound(id, lostFound);
     }
 
-    // Delete item
     @DeleteMapping("/{id}")
     public void deleteItem(@PathVariable Long id) {
         lostFoundService.deleteItem(id);
