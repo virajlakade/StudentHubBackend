@@ -9,7 +9,7 @@ import java.util.List;
 @Repository
 public interface LostFoundRepo extends JpaRepository<LostFound,Long> {
 
- List<LostFound> findByLostnFoundId(Long lostFoundId);
+
 
 
 }
