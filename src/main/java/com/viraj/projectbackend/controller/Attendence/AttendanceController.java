@@ -3,7 +3,9 @@ package com.viraj.projectbackend.controller.Attendence;
 
 
 import com.viraj.projectbackend.model.Attendence.AttendanceLog;
-import com.viraj.projectbackend.service.AttendanceService;
+import com.viraj.projectbackend.service.Attendence.AttendanceService;
+import com.viraj.projectbackend.service.Attendence.AttendanceService;
+import org.hibernate.event.spi.PreInsertEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,7 +18,6 @@ public class AttendanceController {
 
     @Autowired
     private AttendanceService attendanceService;
-
     @GetMapping
     public List<AttendanceLog> getAllAttendance() {
         return attendanceService.getAllAttendance();
