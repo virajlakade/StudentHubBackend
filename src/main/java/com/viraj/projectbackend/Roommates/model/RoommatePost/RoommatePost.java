@@ -1,4 +1,4 @@
-package com.viraj.projectbackend.Roommates.model;
+package com.viraj.projectbackend.Roommates.model.RoommatePost;
 
 import jakarta.persistence.*;
 import lombok.*;
