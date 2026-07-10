@@ -1,9 +1,9 @@
 package com.viraj.projectbackend.Roommates.service;
 
 
-import com.viraj.projectbackend.Roommates.model.RequestStatus;
-import com.viraj.projectbackend.Roommates.model.RoommateRequest;
-import com.viraj.projectbackend.Roommates.repo.RoommateRequest.RoommateRequestRepo;
+import com.viraj.projectbackend.Roommates.model.RoommateRequest.RequestStatus;
+import com.viraj.projectbackend.Roommates.model.RoommateRequest.RoommateRequest;
+import com.viraj.projectbackend.Roommates.repo.RoommateRequestRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +27,7 @@ public class RoommateRequestService {
 
     // Send request
     public RoommateRequest sendRequest(RoommateRequest request) {
-        request.setStatus(RequestStatus.PENDING);
+        request.setStatus(com.viraj.projectbackend.Roommates.model.RoommateRequest.RequestStatus.PENDING);
         return roommateRequestRepo.save(request);
     }
 

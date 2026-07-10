@@ -4,7 +4,7 @@ package com.viraj.projectbackend.Roommates.service;
 
 import com.viraj.projectbackend.Roommates.model.RoommatePost.PostStatus;
 import com.viraj.projectbackend.Roommates.model.RoommatePost.RoommatePost;
-import com.viraj.projectbackend.Roommates.repo.RoommatePost.RoommatepostRepo;
+import com.viraj.projectbackend.Roommates.repo.RoommatepostRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

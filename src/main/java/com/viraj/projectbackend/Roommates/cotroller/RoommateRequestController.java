@@ -3,8 +3,9 @@ package com.viraj.projectbackend.Roommates.cotroller;
 
 
 
-import com.viraj.projectbackend.Roommates.model.RequestStatus;
-import com.viraj.projectbackend.Roommates.model.RoommateRequest;
+
+import com.viraj.projectbackend.Roommates.model.RoommateRequest.RequestStatus;
+import com.viraj.projectbackend.Roommates.model.RoommateRequest.RoommateRequest;
 import com.viraj.projectbackend.Roommates.service.RoommateRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -45,7 +46,7 @@ public class RoommateRequestController {
             @PathVariable Long id,
             @PathVariable RequestStatus status) {
 
-        return roommateRequestService.updateRequestStatus(id,              status);
+        return roommateRequestService.updateRequestStatus(id,  status);
     }
 
     // Delete request
