@@ -1,7 +1,7 @@
-package com.viraj.projectbackend.User.controller;
+package com.viraj.projectbackend.user.controller;
 
-import com.viraj.projectbackend.User.model.User;
-import com.viraj.projectbackend.User.service.UserService;
+import com.viraj.projectbackend.user.model.User;
+import com.viraj.projectbackend.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
