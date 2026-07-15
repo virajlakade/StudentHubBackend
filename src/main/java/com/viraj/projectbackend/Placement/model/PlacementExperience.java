@@ -1,5 +1,6 @@
 package com.viraj.projectbackend.Placement.model;
 
+import com.viraj.projectbackend.user.model.User;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,9 +19,9 @@ public class PlacementExperience {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Optional: Foreign Key to User
-    @Column(name = "user_id")
-    private Long userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @Column(nullable = false)
     private String companyName;

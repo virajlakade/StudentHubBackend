@@ -2,6 +2,7 @@ package com.viraj.projectbackend.Attendance.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.viraj.projectbackend.Subject.model.Subject;
+import com.viraj.projectbackend.user.model.User;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -35,6 +36,11 @@ public class AttendanceLog {
     @JoinColumn(name = "subject_id", nullable = false)
     @JsonIgnoreProperties("attendanceLogs")
     private Subject subject;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnoreProperties({"password"})
+    private User user;
 
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;

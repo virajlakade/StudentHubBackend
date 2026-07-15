@@ -1,17 +1,24 @@
 package com.viraj.projectbackend.user.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.viraj.projectbackend.Attendance.model.AttendanceLog;
+import com.viraj.projectbackend.LostnFound.model.LostFound;
+import com.viraj.projectbackend.Placement.model.PlacementExperience;
+import com.viraj.projectbackend.Roommates.model.RoommatePost.RoommatePost;
+import com.viraj.projectbackend.Roommates.model.RoommateRequest.RoommateRequest;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class User {
 
     @Id
@@ -44,4 +51,28 @@ public class User {
 
     @Column(name = "created_at", updatable = false, insertable = false)
     private Timestamp createdAt;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<AttendanceLog> attendanceLogs;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<LostFound> lostFoundPosts;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<PlacementExperience> placementExperiences;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<RoommatePost> roommatePosts;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL)
+    private List<RoommateRequest> sentRequests;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL)
+    private List<RoommateRequest> receivedRequests;
 }

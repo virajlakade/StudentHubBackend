@@ -1,7 +1,7 @@
 package com.viraj.projectbackend.user.service;
 
 
-import com.viraj.projectbackend.User.repository.UserRepository;
+import com.viraj.projectbackend.user.repo.UserRepository;
 import com.viraj.projectbackend.user.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

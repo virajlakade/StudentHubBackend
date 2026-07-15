@@ -1,7 +1,6 @@
 package com.viraj.projectbackend.LostnFound.model;
 
-
-
+import com.viraj.projectbackend.user.model.User;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -44,6 +43,10 @@ public class LostFound {
 
     @Column(name = "contact_email")
     private String contactEmail;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;

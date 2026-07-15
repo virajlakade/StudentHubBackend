@@ -1,4 +1,4 @@
-package com.viraj.projectbackend.User.repository;
+package com.viraj.projectbackend.user.repo;
 
 import com.viraj.projectbackend.user.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,5 +1,6 @@
 package com.viraj.projectbackend.Roommates.model.RoommatePost;
 
+import com.viraj.projectbackend.user.model.User;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,8 +20,9 @@ public class RoommatePost {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Foreign key (later)
-    private Long userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @Column(nullable = false)
     private String title;
@@ -62,8 +64,10 @@ public class RoommatePost {
 
     private String year;
 
+    @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
     @PrePersist

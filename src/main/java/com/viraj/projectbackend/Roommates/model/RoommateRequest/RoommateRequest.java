@@ -1,7 +1,7 @@
 package com.viraj.projectbackend.Roommates.model.RoommateRequest;
 
-
-
+import com.viraj.projectbackend.Roommates.model.RoommatePost.RoommatePost;
+import com.viraj.projectbackend.user.model.User;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,23 +20,30 @@ public class RoommateRequest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long postId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id", nullable = false)
+    private RoommatePost post;
 
-    private Long senderId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sender_id", nullable = false)
+    private User sender;
 
-    private Long receiverId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "receiver_id", nullable = false)
+    private User receiver;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private RequestStatus status;
 
     @Column(columnDefinition = "TEXT")
     private String message;
 
+    @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
     @PrePersist
     public void onCreate() {
         createdAt = LocalDateTime.now();
     }
-
 }
