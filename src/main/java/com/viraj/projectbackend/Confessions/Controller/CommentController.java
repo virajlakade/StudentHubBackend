@@ -1,6 +1,5 @@
 package com.viraj.projectbackend.Confessions.Controller;
 
-
 import com.viraj.projectbackend.Confessions.model.Confession;
 import com.viraj.projectbackend.Confessions.model.ConfessionComment;
 import com.viraj.projectbackend.Confessions.repo.CommentRepository;
@@ -8,10 +7,10 @@ import com.viraj.projectbackend.Confessions.repo.ConfessionRepository;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
 @CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/api/comments")
-
 public class CommentController {
 
     private final CommentRepository commentRepository;
@@ -26,9 +25,7 @@ public class CommentController {
     }
 
     @GetMapping("/{confessionId}")
-    public List<ConfessionComment> getComments(
-            @PathVariable Long confessionId) {
-
+    public List<ConfessionComment> getComments(@PathVariable Long confessionId) {
         return commentRepository.findByConfessionId(confessionId);
     }
 
@@ -37,17 +34,11 @@ public class CommentController {
             @PathVariable Long confessionId,
             @RequestBody ConfessionComment comment) {
 
-        Confession confession =
-                confessionRepository.findById(confessionId)
-                        .orElseThrow();
+        Confession confession = confessionRepository.findById(confessionId)
+                .orElseThrow(() -> new RuntimeException("Confession not found"));
 
         comment.setConfession(confession);
 
         return commentRepository.save(comment);
-    }
-    @GetMapping("/categories")
-    public List<String> getCategories() {
-        CommentController confessionService = null;
-        return confessionService.getCategories();
     }
 }

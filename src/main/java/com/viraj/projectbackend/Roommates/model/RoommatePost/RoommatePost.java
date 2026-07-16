@@ -1,5 +1,7 @@
 package com.viraj.projectbackend.Roommates.model.RoommatePost;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.viraj.projectbackend.Roommates.model.RoommateRequest.RoommateRequest;
 import com.viraj.projectbackend.user.model.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -8,7 +10,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Table(name = "roommate_post")
+@Table(name = "roommate_posts")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -20,37 +22,45 @@ public class RoommatePost {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    // ================= USER =================
+
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnoreProperties({
+            "password",
+            "attendanceLogs",
+            "lostFoundPosts",
+            "placementExperiences",
+            "roommatePosts",
+            "sentRequests",
+            "receivedRequests"
+    })
     private User user;
+
+    // ================= POST DETAILS =================
 
     @Column(nullable = false)
     private String title;
+
+    @Column(columnDefinition = "TEXT")
+    private String description;
 
     @Column(nullable = false)
     private String location;
 
     @Column(nullable = false)
-    private Integer rent;
+    private Double rent;
 
-    @Column(columnDefinition = "TEXT")
-    private String description;
-
-    @ElementCollection
-    @CollectionTable(
-            name = "roommate_post_tags",
-            joinColumns = @JoinColumn(name = "post_id")
-    )
-    @Column(name = "tag")
-    private List<String> tags;
-
-    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private GenderPreference gender;
+    private String gender;
 
-    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private PostStatus status;
+    private String occupancy;
+
+    @Column(nullable = false)
+    private String status;
+
+    // ================= CONTACT =================
 
     private String contactName;
 
@@ -58,26 +68,35 @@ public class RoommatePost {
 
     private String contactPhone;
 
+    @Column(columnDefinition = "LONGTEXT")
     private String avatar;
 
-    private String degree;
+    // ================= USER INFO =================
 
-    private String year;
+    private String branch;
+
+    private Integer yearOfStudy;
+
+    private String degreeProgram;
+
+    // ================= CREATED =================
 
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
-
     @PrePersist
     public void onCreate() {
         createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
     }
 
-    @PreUpdate
-    public void onUpdate() {
-        updatedAt = LocalDateTime.now();
-    }
+    // ================= REQUESTS =================
+
+    @OneToMany(
+            mappedBy = "post",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    @JsonIgnoreProperties("post")
+    private List<RoommateRequest> requests;
+
 }

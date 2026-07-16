@@ -29,13 +29,6 @@ public class UserController {
         return userService.getUserById(id);
     }
 
-    // ================= GET USER BY EMAIL =================
-
-    @GetMapping("/email/{email}")
-    public User getUserByEmail(@PathVariable String email) {
-        return userService.getUserByEmail(email);
-    }
-
     // ================= CREATE USER =================
 
     @PostMapping
@@ -43,14 +36,14 @@ public class UserController {
         return userService.createUser(user);
     }
 
-    // ================= UPDATE USER =================
+    // ================= UPDATE PROFILE =================
 
     @PutMapping("/{id}")
-    public User updateUser(
+    public User updateProfile(
             @PathVariable Long id,
-            @RequestBody User user
+            @RequestBody User updatedUser
     ) {
-        return userService.updateUser(id, user);
+        return userService.updateProfile(id, updatedUser);
     }
 
     // ================= DELETE USER =================

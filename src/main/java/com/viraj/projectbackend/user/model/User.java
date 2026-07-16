@@ -37,13 +37,23 @@ public class User {
     @Column(length = 15)
     private String phone;
 
-    @Column(length = 50)
+    @Column(length = 100)
     private String branch;
 
     @Column(name = "year_of_study")
     private Integer yearOfStudy;
 
-    @Column(name = "profile_image")
+    @Column(name = "roll_number", length = 30)
+    private String rollNumber;
+
+    @Column(name = "degree_program", length = 100)
+    private String degreeProgram;
+
+    @Column(columnDefinition = "TEXT")
+    private String skills;
+
+    @Lob
+    @Column(name = "profile_image", columnDefinition = "LONGTEXT")
     private String profileImage;
 
     @Column(columnDefinition = "TEXT")
@@ -52,17 +62,25 @@ public class User {
     @Column(name = "created_at", updatable = false, insertable = false)
     private Timestamp createdAt;
 
+    // ================= Attendance =================
+
     @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<AttendanceLog> attendanceLogs;
+
+    // ================= Lost & Found =================
 
     @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<LostFound> lostFoundPosts;
 
+    // ================= Placement =================
+
     @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<PlacementExperience> placementExperiences;
+
+    // ================= Roommate =================
 
     @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
