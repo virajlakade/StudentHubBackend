@@ -39,7 +39,17 @@ public class AttendanceLog {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    @JsonIgnoreProperties({"password"})
+    @JsonIgnoreProperties({
+            "password",
+            "hibernateLazyInitializer",
+            "handler",
+            "attendanceLogs",
+            "lostFoundPosts",
+            "placementExperiences",
+            "roommatePosts",
+            "sentRequests",
+            "receivedRequests"
+    })
     private User user;
 
     @Column(name = "created_at", updatable = false)
