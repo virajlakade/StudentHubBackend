@@ -1,8 +1,9 @@
 package com.viraj.projectbackend.Subject.model;
 
-import com.viraj.projectbackend.Attendance.model.AttendanceLog;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+import com.viraj.projectbackend.Attendance.model.AttendanceLog;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -40,6 +41,7 @@ public class Subject {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @JsonIgnore
     @OneToMany(
             mappedBy = "subject",
             cascade = CascadeType.ALL,
