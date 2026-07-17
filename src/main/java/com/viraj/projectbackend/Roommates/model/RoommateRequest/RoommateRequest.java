@@ -1,5 +1,6 @@
 package com.viraj.projectbackend.Roommates.model.RoommateRequest;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.viraj.projectbackend.Roommates.model.RoommatePost.RoommatePost;
 import com.viraj.projectbackend.user.model.User;
 import jakarta.persistence.*;
@@ -22,14 +23,33 @@ public class RoommateRequest {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", nullable = false)
+    @JsonIgnoreProperties({"requests"})
     private RoommatePost post;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sender_id", nullable = false)
+    @JsonIgnoreProperties({
+            "password",
+            "attendanceLogs",
+            "lostFoundPosts",
+            "placementExperiences",
+            "roommatePosts",
+            "sentRequests",
+            "receivedRequests"
+    })
     private User sender;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "receiver_id", nullable = false)
+    @JsonIgnoreProperties({
+            "password",
+            "attendanceLogs",
+            "lostFoundPosts",
+            "placementExperiences",
+            "roommatePosts",
+            "sentRequests",
+            "receivedRequests"
+    })
     private User receiver;
 
     @Enumerated(EnumType.STRING)
