@@ -1,6 +1,7 @@
 package com.viraj.projectbackend.user.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.viraj.projectbackend.Attendance.model.AttendanceLog;
 import com.viraj.projectbackend.LostnFound.model.LostFound;
 import com.viraj.projectbackend.Placement.model.PlacementExperience;
@@ -19,6 +20,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class User {
 
     @Id
@@ -62,25 +64,17 @@ public class User {
     @Column(name = "created_at", updatable = false, insertable = false)
     private Timestamp createdAt;
 
-    // ================= Attendance =================
-
     @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<AttendanceLog> attendanceLogs;
-
-    // ================= Lost & Found =================
 
     @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<LostFound> lostFoundPosts;
 
-    // ================= Placement =================
-
     @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<PlacementExperience> placementExperiences;
-
-    // ================= Roommate =================
 
     @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
