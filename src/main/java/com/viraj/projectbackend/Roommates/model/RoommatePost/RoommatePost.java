@@ -98,5 +98,12 @@ public class RoommatePost {
     )
     @JsonIgnoreProperties("post")
     private List<RoommateRequest> requests;
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(
+            name = "roommate_post_tags",
+            joinColumns = @JoinColumn(name = "post_id")
+    )
+    @Column(name = "tag")
+    private List<String> tags;
 
 }
