@@ -1,5 +1,5 @@
 package com.viraj.projectbackend.LostnFound.service;
-
+import org.springframework.transaction.annotation.Transactional;
 import com.viraj.projectbackend.LostnFound.model.LostFound;
 import com.viraj.projectbackend.LostnFound.model.LostFoundStatus;
 import com.viraj.projectbackend.LostnFound.repo.LostFoundRepo;
@@ -23,6 +23,8 @@ public class LostFoundService {
 
     @Autowired
     private LostFoundRepo lostFoundRepo;
+    @Autowired
+    private EmailService emailService;
 
     @Autowired
     private UserRepository userRepository;
@@ -118,6 +120,21 @@ public class LostFoundService {
 
         lostFoundRepo.deleteById(id);
 
+    }
+    @Transactional
+    public void claimItem(Long itemId) {
+
+        LostFound item = lostFoundRepo.findById(itemId)
+                .orElseThrow(() -> new RuntimeException("Item not found"));
+
+        emailService.sendLostFoundMail(
+                item.getContactEmail(),
+                item.getTitle(),
+                "StudentHub User",
+                "noreply@studenthub.com",
+                "Not Provided",
+                "A StudentHub user wants to claim your lost item. Please log in to StudentHub to contact the claimant."
+        );
     }
 
 }

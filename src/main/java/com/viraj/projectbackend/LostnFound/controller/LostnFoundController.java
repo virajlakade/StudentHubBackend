@@ -92,5 +92,14 @@ public class LostnFoundController {
         lostFoundService.deleteItem(id);
 
     }
+    // ================= CLAIM ITEM =================
+
+    @PostMapping("/claim/{id}")
+    public String claimItem(@PathVariable Long id) {
+
+        lostFoundService.claimItem(id);
+
+        return "Claim request sent successfully!";
+    }
 
 }
