@@ -1,5 +1,6 @@
 package com.viraj.projectbackend.Roommates.model.RoommatePost;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.viraj.projectbackend.Roommates.model.RoommateRequest.RoommateRequest;
 import com.viraj.projectbackend.user.model.User;
@@ -16,17 +17,18 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class RoommatePost {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // ================= USER =================
-
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", nullable = false)
     @JsonIgnoreProperties({
+            "hibernateLazyInitializer",
+            "handler",
             "password",
             "attendanceLogs",
             "lostFoundPosts",
@@ -36,8 +38,6 @@ public class RoommatePost {
             "receivedRequests"
     })
     private User user;
-
-    // ================= POST DETAILS =================
 
     @Column(nullable = false)
     private String title;
@@ -60,8 +60,6 @@ public class RoommatePost {
     @Column(nullable = false)
     private String status;
 
-    // ================= CONTACT =================
-
     private String contactName;
 
     private String contactEmail;
@@ -71,15 +69,11 @@ public class RoommatePost {
     @Column(columnDefinition = "LONGTEXT")
     private String avatar;
 
-    // ================= USER INFO =================
-
     private String branch;
 
     private Integer yearOfStudy;
 
     private String degreeProgram;
-
-    // ================= CREATED =================
 
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
@@ -89,15 +83,14 @@ public class RoommatePost {
         createdAt = LocalDateTime.now();
     }
 
-    // ================= REQUESTS =================
-
+    @JsonIgnore
     @OneToMany(
             mappedBy = "post",
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
-    @JsonIgnoreProperties("post")
     private List<RoommateRequest> requests;
+
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(
             name = "roommate_post_tags",
@@ -105,5 +98,4 @@ public class RoommatePost {
     )
     @Column(name = "tag")
     private List<String> tags;
-
 }

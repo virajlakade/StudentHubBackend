@@ -1,4 +1,4 @@
-package com.viraj.projectbackend.Attendance.service;
+package com.viraj.projectbackend.LostnFound.service;
 
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;

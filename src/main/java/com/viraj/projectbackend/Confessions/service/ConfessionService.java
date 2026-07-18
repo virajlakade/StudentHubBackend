@@ -44,7 +44,15 @@ public class ConfessionService {
         return repository.save(c);
     }
     public List<String> getCategories() {
-        return repository.findDistinctCategories();
+        return List.of(
+                "Academic",
+                "Hostel",
+                "Relationship",
+                "College Life",
+                "Placement",
+                "Funny",
+                "Other"
+        );
     }
 }
 
