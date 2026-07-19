@@ -122,18 +122,21 @@ public class LostFoundService {
 
     }
     @Transactional
-    public void claimItem(Long itemId) {
+    public void claimItem(Long itemId, Long finderUserId) {
 
         LostFound item = lostFoundRepo.findById(itemId)
                 .orElseThrow(() -> new RuntimeException("Item not found"));
 
+        User finder = userRepository.findById(finderUserId)
+                .orElseThrow(() -> new RuntimeException("Finder not found"));
+
         emailService.sendLostFoundMail(
                 item.getContactEmail(),
                 item.getTitle(),
-                "StudentHub User",
-                "noreply@studenthub.com",
-                "Not Provided",
-                "A StudentHub user wants to claim your lost item. Please log in to StudentHub to contact the claimant."
+                finder.getFullName(),
+                finder.getEmail(),
+                finder.getPhone(),
+                "I believe I have found your item. Please contact me."
         );
     }
 
