@@ -95,9 +95,12 @@ public class LostnFoundController {
     // ================= CLAIM ITEM =================
 
     @PostMapping("/claim/{id}")
-    public String claimItem(@PathVariable Long id) {
+    public String claimItem(
+            @PathVariable Long id,
+            @RequestParam Long finderUserId
+    ) {
 
-        lostFoundService.claimItem(id);
+        lostFoundService.claimItem(id, finderUserId);
 
         return "Claim request sent successfully!";
     }
