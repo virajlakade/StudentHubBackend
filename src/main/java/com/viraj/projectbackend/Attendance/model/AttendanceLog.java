@@ -34,7 +34,7 @@ public class AttendanceLog {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "subject_id", nullable = false)
-    @JsonIgnoreProperties("attendanceLogs")
+    @JsonIgnoreProperties({"attendanceLogs", "user"})
     private Subject subject;
 
     @ManyToOne(fetch = FetchType.LAZY)
