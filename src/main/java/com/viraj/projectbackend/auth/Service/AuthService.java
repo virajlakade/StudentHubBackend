@@ -8,6 +8,7 @@ import com.viraj.projectbackend.user.model.User;
 import com.viraj.projectbackend.user.repo.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -18,10 +19,10 @@ public class AuthService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final JwtService jwtService;
 
-    // ================= REGISTER =================
+    // ========================= REGISTER =========================
 
     public JwtResponse register(RegisterRequest request) {
 
@@ -35,43 +36,63 @@ public class AuthService {
                 .password(passwordEncoder.encode(request.getPassword()))
                 .phone(request.getPhone())
                 .branch(request.getBranch())
-                .yearOfStudy(request.getYearOfStudy())
+                .yearOfStudy(
+                        request.getYearOfStudy() == null
+                                ? 1
+                                : request.getYearOfStudy()
+                )
                 .rollNumber(request.getRollNumber())
                 .degreeProgram(request.getDegreeProgram())
                 .provider("LOCAL")
-                .role("ROLE_USER")
                 .enabled(true)
+                .role("ROLE_USER")
                 .build();
 
-        userRepository.save(user);
+        user = userRepository.save(user);
 
         String token = jwtService.generateToken(user.getEmail());
 
-        return JwtResponse.builder()
-                .token(token)
-                .type("Bearer")
-                .id(user.getId())
-                .fullName(user.getFullName())
-                .email(user.getEmail())
-                .role(user.getRole())
-                .build();
+        return buildResponse(user, token);
     }
 
-    // ================= LOGIN =================
+    // ========================= LOGIN =========================
 
     public JwtResponse login(LoginRequest request) {
 
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getEmail(),
-                        request.getPassword()
-                )
-        );
+        try {
+
+            authenticationManager.authenticate(
+
+                    new UsernamePasswordAuthenticationToken(
+                            request.getEmail(),
+                            request.getPassword()
+                    )
+
+            );
+
+        } catch (Exception e) {
+
+            throw new BadCredentialsException(
+                    "Invalid email or password."
+            );
+
+        }
 
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() ->
+                        new RuntimeException("User not found."));
 
         String token = jwtService.generateToken(user.getEmail());
+
+        return buildResponse(user, token);
+    }
+
+    // ========================= COMMON RESPONSE =========================
+
+    private JwtResponse buildResponse(
+            User user,
+            String token
+    ) {
 
         return JwtResponse.builder()
                 .token(token)
@@ -82,4 +103,5 @@ public class AuthService {
                 .role(user.getRole())
                 .build();
     }
+
 }

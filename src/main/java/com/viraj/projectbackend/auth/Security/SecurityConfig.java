@@ -7,9 +7,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -32,7 +34,8 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationManager authenticationManager(
-            AuthenticationConfiguration configuration) throws Exception {
+            AuthenticationConfiguration configuration
+    ) throws Exception {
         return configuration.getAuthenticationManager();
     }
 
@@ -41,26 +44,58 @@ public class SecurityConfig {
             throws Exception {
 
         http
-                .csrf(csrf -> csrf.disable())
+
+                .csrf(AbstractHttpConfigurer::disable)
+
+                .cors(Customizer.withDefaults())
+
+                .formLogin(AbstractHttpConfigurer::disable)
+
+                .httpBasic(AbstractHttpConfigurer::disable)
 
                 .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
 
                 .authorizeHttpRequests(auth -> auth
+
+                        // Public APIs
                         .requestMatchers(
                                 "/api/auth/**",
                                 "/oauth2/**",
                                 "/login/**",
                                 "/error"
                         ).permitAll()
+
+                        // Read-only APIs
+                        .requestMatchers(
+                                "/api/confessions/**",
+                                "/api/comments/**",
+                                "/api/lostfound/**",
+                                "/api/placements/**",
+                                "/api/subjects/**",
+                                "/api/attendance/**",
+                                "/api/roommate/**"
+                        ).permitAll()
+
+                        // Logged-in user endpoint
+                        .requestMatchers("/api/users/me")
+                        .authenticated()
+
+                        // Other user endpoints
+                        .requestMatchers("/api/users/**")
+                        .authenticated()
+
                         .anyRequest()
                         .authenticated()
                 )
 
                 .oauth2Login(oauth -> oauth
-                        .userInfoEndpoint(userInfo ->
-                                userInfo.userService(customOAuth2UserService)
+
+                        .userInfoEndpoint(user ->
+                                user.userService(customOAuth2UserService)
                         )
+
                         .successHandler(oAuth2LoginSuccessHandler)
                 )
 

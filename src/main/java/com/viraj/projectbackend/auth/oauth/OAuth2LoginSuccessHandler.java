@@ -14,7 +14,8 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.Map;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
 @Component
@@ -30,60 +31,56 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
                                         Authentication authentication)
             throws IOException, ServletException {
 
-        OAuth2AuthenticationToken token =
+        OAuth2AuthenticationToken authenticationToken =
                 (OAuth2AuthenticationToken) authentication;
 
-        OAuth2User oauthUser = token.getPrincipal();
+        OAuth2User oauthUser = authenticationToken.getPrincipal();
 
-        String provider = token.getAuthorizedClientRegistrationId().toUpperCase();
+        String provider =
+                authenticationToken.getAuthorizedClientRegistrationId()
+                        .toUpperCase();
 
         String email = null;
-        String name = null;
+        String fullName = null;
         String providerId = null;
         String imageUrl = null;
 
         if ("GOOGLE".equals(provider)) {
 
             email = oauthUser.getAttribute("email");
-            name = oauthUser.getAttribute("name");
+            fullName = oauthUser.getAttribute("name");
             providerId = oauthUser.getAttribute("sub");
             imageUrl = oauthUser.getAttribute("picture");
 
         } else if ("GITHUB".equals(provider)) {
 
             providerId = String.valueOf(oauthUser.getAttribute("id"));
-            name = oauthUser.getAttribute("name");
 
-            if (name == null) {
-                name = oauthUser.getAttribute("login");
+            fullName = oauthUser.getAttribute("name");
+
+            if (fullName == null || fullName.isBlank()) {
+                fullName = oauthUser.getAttribute("login");
             }
 
             email = oauthUser.getAttribute("email");
 
-            imageUrl = oauthUser.getAttribute("avatar_url");
-
-            if (email == null) {
+            if (email == null || email.isBlank()) {
                 email = providerId + "@github.local";
             }
+
+            imageUrl = oauthUser.getAttribute("avatar_url");
         }
 
-        Optional<User> optionalUser = userRepository.findByEmail(email);
+        User user = userRepository
+                .findByEmail(email)
+                .orElseGet(User::new);
 
-        User user;
-
-        if (optionalUser.isPresent()) {
-
-            user = optionalUser.get();
-
-        } else {
-
-            user = new User();
-
+        if (user.getId() == null) {
             user.setEmail(email);
             user.setPassword("");
         }
 
-        user.setFullName(name);
+        user.setFullName(fullName);
         user.setProvider(provider);
         user.setProviderId(providerId);
         user.setImageUrl(imageUrl);
@@ -93,12 +90,14 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
             user.setRole("ROLE_USER");
         }
 
-        userRepository.save(user);
+        user = userRepository.save(user);
 
         String jwt = jwtService.generateToken(user.getEmail());
 
-        response.sendRedirect(
-                "http://localhost:5173/oauth-success?token=" + jwt
-        );
+        String redirectUrl =
+                "http://localhost:5173/?token="
+                        + URLEncoder.encode(jwt, StandardCharsets.UTF_8);
+
+        response.sendRedirect(redirectUrl);
     }
 }

@@ -1,6 +1,7 @@
 package com.viraj.projectbackend.auth.jwt;
 
 import com.viraj.projectbackend.auth.Security.CustomUserDetailsService;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,7 +22,7 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
-    private final CustomUserDetailsService userDetailsService;
+    private final CustomUserDetailsService customUserDetailsService;
 
     @Override
     protected void doFilterInternal(
@@ -30,52 +31,69 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             FilterChain filterChain
     ) throws ServletException, IOException {
 
-        String jwt = getJwtFromRequest(request);
+        try {
 
-        if (jwt != null) {
+            String jwt = extractToken(request);
 
-            String email = jwtService.extractUsername(jwt);
-
-            if (email != null &&
+            if (jwt != null &&
                     SecurityContextHolder.getContext().getAuthentication() == null) {
 
-                UserDetails userDetails =
-                        userDetailsService.loadUserByUsername(email);
+                String email = jwtService.extractUsername(jwt);
 
-                if (jwtService.isTokenValid(jwt, userDetails.getUsername())) {
+                if (email != null) {
 
-                    UsernamePasswordAuthenticationToken authentication =
-                            new UsernamePasswordAuthenticationToken(
-                                    userDetails,
-                                    null,
-                                    userDetails.getAuthorities()
-                            );
+                    UserDetails userDetails =
+                            customUserDetailsService.loadUserByUsername(email);
 
-                    authentication.setDetails(
-                            new WebAuthenticationDetailsSource()
-                                    .buildDetails(request)
-                    );
+                    if (jwtService.isTokenValid(jwt, userDetails.getUsername())) {
 
-                    SecurityContextHolder
-                            .getContext()
-                            .setAuthentication(authentication);
+                        UsernamePasswordAuthenticationToken authentication =
+                                new UsernamePasswordAuthenticationToken(
+                                        userDetails,
+                                        null,
+                                        userDetails.getAuthorities()
+                                );
+
+                        authentication.setDetails(
+                                new WebAuthenticationDetailsSource()
+                                        .buildDetails(request)
+                        );
+
+                        SecurityContextHolder.getContext()
+                                .setAuthentication(authentication);
+                    }
                 }
             }
+
+        } catch (JwtException | IllegalArgumentException e) {
+
+            // Invalid token - continue request without authentication
+            SecurityContextHolder.clearContext();
         }
 
         filterChain.doFilter(request, response);
     }
 
-    private String getJwtFromRequest(HttpServletRequest request) {
+    private String extractToken(HttpServletRequest request) {
 
-        String bearerToken = request.getHeader("Authorization");
+        String header = request.getHeader("Authorization");
 
-        if (StringUtils.hasText(bearerToken)
-                && bearerToken.startsWith("Bearer ")) {
-
-            return bearerToken.substring(7);
+        if (!StringUtils.hasText(header)) {
+            return null;
         }
 
-        return null;
+        if (!header.startsWith("Bearer ")) {
+            return null;
+        }
+
+        String token = header.substring(7).trim();
+
+        if (!StringUtils.hasText(token)
+                || token.equalsIgnoreCase("null")
+                || token.equalsIgnoreCase("undefined")) {
+            return null;
+        }
+
+        return token;
     }
 }

@@ -3,6 +3,7 @@ package com.viraj.projectbackend.user.controller;
 import com.viraj.projectbackend.user.model.User;
 import com.viraj.projectbackend.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,6 +15,18 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+
+    // ================= GET CURRENT USER =================
+
+    @GetMapping("/me")
+    public User getCurrentUser(Authentication authentication) {
+
+        if (authentication == null || authentication.getName() == null) {
+            throw new RuntimeException("User not authenticated");
+        }
+
+        return userService.getUserByEmail(authentication.getName());
+    }
 
     // ================= GET ALL USERS =================
 
