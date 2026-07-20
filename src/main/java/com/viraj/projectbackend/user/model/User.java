@@ -33,7 +33,9 @@ public class User {
     @Column(nullable = false, unique = true, length = 100)
     private String email;
 
-    @Column(nullable = false)
+    // BCrypt encoded password.
+    // Can be null for Google/GitHub users.
+    @Column
     private String password;
 
     @Column(length = 15)
@@ -61,8 +63,32 @@ public class User {
     @Column(columnDefinition = "TEXT")
     private String bio;
 
+    // ================= Authentication =================
+
+    @Column(nullable = false)
+    @Builder.Default
+    private String role = "ROLE_USER";
+
+    @Column(nullable = false)
+    @Builder.Default
+    private Boolean enabled = true;
+
+    // LOCAL / GOOGLE / GITHUB
+    @Column(nullable = false)
+    @Builder.Default
+    private String provider = "LOCAL";
+
+    // Google Subject ID / GitHub User ID
+    private String providerId;
+
+    // OAuth profile picture
+    @Column(columnDefinition = "TEXT")
+    private String imageUrl;
+
     @Column(name = "created_at", updatable = false, insertable = false)
     private Timestamp createdAt;
+
+    // ================= Relationships =================
 
     @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
