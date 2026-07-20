@@ -44,7 +44,6 @@ public class SecurityConfig {
             throws Exception {
 
         http
-
                 .csrf(AbstractHttpConfigurer::disable)
 
                 .cors(Customizer.withDefaults())
@@ -59,15 +58,16 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(auth -> auth
 
-                        // Public APIs
+                        // Public
                         .requestMatchers(
                                 "/api/auth/**",
                                 "/oauth2/**",
                                 "/login/**",
-                                "/error"
+                                "/error",
+                                "/uploads/**"
                         ).permitAll()
 
-                        // Read-only APIs
+                        // Public APIs
                         .requestMatchers(
                                 "/api/confessions/**",
                                 "/api/comments/**",
@@ -78,24 +78,20 @@ public class SecurityConfig {
                                 "/api/roommate/**"
                         ).permitAll()
 
-                        // Logged-in user endpoint
-                        .requestMatchers("/api/users/me")
-                        .authenticated()
-
-                        // Other user endpoints
-                        .requestMatchers("/api/users/**")
-                        .authenticated()
+                        // Authenticated APIs
+                        .requestMatchers(
+                                "/api/users/me",
+                                "/api/users/**"
+                        ).authenticated()
 
                         .anyRequest()
                         .authenticated()
                 )
 
                 .oauth2Login(oauth -> oauth
-
                         .userInfoEndpoint(user ->
                                 user.userService(customOAuth2UserService)
                         )
-
                         .successHandler(oAuth2LoginSuccessHandler)
                 )
 

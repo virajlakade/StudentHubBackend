@@ -1,9 +1,11 @@
 package com.viraj.projectbackend.Subject.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.viraj.projectbackend.Attendance.model.AttendanceLog;
+import com.viraj.projectbackend.user.model.User;
 import jakarta.persistence.*;
 import lombok.*;
-import com.viraj.projectbackend.Attendance.model.AttendanceLog;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -24,7 +26,7 @@ public class Subject {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String code;
 
     @Column(nullable = false)
@@ -35,11 +37,24 @@ public class Subject {
     @Column(name = "target_percentage")
     private Integer targetPercentage;
 
-    @Column(name = "created_at", updatable = false)
-    private LocalDateTime createdAt;
+    // ================= OWNER =================
 
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnoreProperties({
+            "password",
+            "hibernateLazyInitializer",
+            "handler",
+            "attendanceLogs",
+            "lostFoundPosts",
+            "placementExperiences",
+            "roommatePosts",
+            "sentRequests",
+            "receivedRequests"
+    })
+    private User user;
+
+    // ================= ATTENDANCE =================
 
     @JsonIgnore
     @OneToMany(
@@ -48,6 +63,12 @@ public class Subject {
             orphanRemoval = true
     )
     private List<AttendanceLog> attendanceLogs;
+
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 
     @PrePersist
     public void onCreate() {

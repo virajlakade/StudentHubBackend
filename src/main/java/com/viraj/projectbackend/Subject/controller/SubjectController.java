@@ -1,10 +1,8 @@
 package com.viraj.projectbackend.Subject.controller;
 
-
-
 import com.viraj.projectbackend.Subject.model.Subject;
 import com.viraj.projectbackend.Subject.service.SubjectService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,35 +10,51 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/subjects")
 @CrossOrigin(origins = "http://localhost:5173")
+@RequiredArgsConstructor
 public class SubjectController {
 
-    @Autowired
-    private SubjectService subjectService;
+    private final SubjectService subjectService;
 
-    @GetMapping
-    public List<Subject> getAllSubjects() {
-        return subjectService.getAllSubjects();
+    // Get all subjects of a user
+    @GetMapping("/user/{userId}")
+    public List<Subject> getSubjectsByUser(@PathVariable Long userId) {
+        return subjectService.getSubjectsByUser(userId);
     }
 
-    @GetMapping("/{id}")
-    public Subject getSubjectById(@PathVariable Long id) {
-        return subjectService.getSubjectById(id);
+    // Get one subject of a user
+    @GetMapping("/user/{userId}/{id}")
+    public Subject getSubjectById(
+            @PathVariable Long userId,
+            @PathVariable Long id) {
+
+        return subjectService.getSubjectById(id, userId);
     }
 
-    @PostMapping
-    public Subject addSubject(@RequestBody Subject subject) {
-        return subjectService.addSubject(subject);
+    // Add subject for a user
+    @PostMapping("/user/{userId}")
+    public Subject addSubject(
+            @PathVariable Long userId,
+            @RequestBody Subject subject) {
+
+        return subjectService.addSubject(userId, subject);
     }
 
-    @PutMapping("/{id}")
-    public Subject updateSubject(@PathVariable Long id,
-                                 @RequestBody Subject subject) {
-        return subjectService.updateSubject(id, subject);
+    // Update subject of a user
+    @PutMapping("/user/{userId}/{id}")
+    public Subject updateSubject(
+            @PathVariable Long userId,
+            @PathVariable Long id,
+            @RequestBody Subject subject) {
+
+        return subjectService.updateSubject(id, userId, subject);
     }
 
-    @DeleteMapping("/{id}")
-    public void deleteSubject(@PathVariable Long id) {
-        subjectService.deleteSubject(id);
-    }
+    // Delete subject of a user
+    @DeleteMapping("/user/{userId}/{id}")
+    public void deleteSubject(
+            @PathVariable Long userId,
+            @PathVariable Long id) {
 
+        subjectService.deleteSubject(id, userId);
+    }
 }
