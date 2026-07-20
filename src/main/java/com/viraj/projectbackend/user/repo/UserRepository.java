@@ -9,16 +9,21 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    // Find user by email
+    // Login using email
     Optional<User> findByEmail(String email);
 
     // Check if email already exists
     boolean existsByEmail(String email);
 
-    // Find user by roll number
+    // Find by roll number
     Optional<User> findByRollNumber(String rollNumber);
 
-    // Check if roll number already exists
+    // Check if roll number exists
     boolean existsByRollNumber(String rollNumber);
 
+    // OAuth Login
+    Optional<User> findByProviderAndProviderId(
+            String provider,
+            String providerId
+    );
 }
