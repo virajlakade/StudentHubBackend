@@ -57,4 +57,11 @@ public class SubjectController {
 
         subjectService.deleteSubject(id, userId);
     }
+    @DeleteMapping("/user/{userId}/all")
+    public void deleteAllSubjects(
+            @PathVariable Long userId) {
+
+        subjectService.deleteAllSubjects(userId);
+
+    }
 }
