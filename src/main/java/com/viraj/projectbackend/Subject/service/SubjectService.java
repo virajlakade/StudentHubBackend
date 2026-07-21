@@ -70,4 +70,9 @@ public class SubjectService {
 
         subjectRepository.delete(subject);
     }
+    public void deleteAllSubjects(Long userId) {
+
+        subjectRepository.deleteByUserId(userId);
+
+    }
 }
