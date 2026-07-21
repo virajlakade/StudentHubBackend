@@ -17,4 +17,5 @@ public interface SubjectRepository extends JpaRepository<Subject, Long> {
 
     // Optional: Prevent duplicate subject codes for the same user
     boolean existsByCodeAndUserId(String code, Long userId);
+    void deleteByUserId(Long userId);
 }
