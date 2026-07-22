@@ -11,6 +11,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -113,4 +114,9 @@ public class User {
     @JsonIgnore
     @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL)
     private List<RoommateRequest> receivedRequests;
+    @Column(name = "reset_otp")
+    private String resetOtp;
+
+    @Column(name = "otp_expiry")
+    private LocalDateTime otpExpiry;
 }

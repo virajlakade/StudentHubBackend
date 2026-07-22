@@ -26,4 +26,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
             String provider,
             String providerId
     );
+    Optional<User> findByResetOtp(String resetOtp);
 }
