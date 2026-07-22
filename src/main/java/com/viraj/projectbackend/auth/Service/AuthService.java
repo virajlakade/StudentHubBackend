@@ -13,6 +13,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.Random;
+
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -21,6 +24,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
+    private final OtpEmailService otpEmailService;
 
     // ========================= REGISTER =========================
 
@@ -102,6 +106,69 @@ public class AuthService {
                 .email(user.getEmail())
                 .role(user.getRole())
                 .build();
+    }
+    public String forgotPassword(String email) {
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("No account found with this email."));
+
+        String otp = String.format("%06d", new Random().nextInt(1000000));
+
+        user.setResetOtp(otp);
+        user.setOtpExpiry(LocalDateTime.now().plusMinutes(5));
+
+        userRepository.save(user);
+
+        otpEmailService.sendOtp(user.getEmail(), otp);
+
+        return "OTP has been sent to your email.";
+    }
+    public String verifyOtp(String email, String otp) {
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (user.getResetOtp() == null) {
+            throw new RuntimeException("OTP not generated.");
+        }
+
+        if (!user.getResetOtp().equals(otp)) {
+            throw new RuntimeException("Invalid OTP.");
+        }
+
+        if (user.getOtpExpiry().isBefore(LocalDateTime.now())) {
+            throw new RuntimeException("OTP expired.");
+        }
+
+        return "OTP verified.";
+    }
+    public String resetPassword(
+            String email,
+            String otp,
+            String newPassword
+    ) {
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (user.getResetOtp() == null ||
+                !user.getResetOtp().equals(otp)) {
+
+            throw new RuntimeException("Invalid OTP.");
+        }
+
+        if (user.getOtpExpiry().isBefore(LocalDateTime.now())) {
+            throw new RuntimeException("OTP expired.");
+        }
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+
+        user.setResetOtp(null);
+        user.setOtpExpiry(null);
+
+        userRepository.save(user);
+
+        return "Password updated successfully.";
     }
 
 }
