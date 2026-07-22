@@ -6,6 +6,7 @@ import com.viraj.projectbackend.user.model.User;
 import com.viraj.projectbackend.user.repo.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -16,24 +17,21 @@ public class SubjectService {
     private final SubjectRepository subjectRepository;
     private final UserRepository userRepository;
 
-    // Get all subjects of a particular user
     public List<Subject> getSubjectsByUser(Long userId) {
         return subjectRepository.findByUserId(userId);
     }
 
-    // Get one subject belonging to a user
     public Subject getSubjectById(Long id, Long userId) {
         return subjectRepository.findByIdAndUserId(id, userId);
     }
 
-    // Add a subject for a user
     public Subject addSubject(Long userId, Subject subject) {
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         if (subjectRepository.existsByCodeAndUserId(subject.getCode(), userId)) {
-            throw new RuntimeException("Subject code already exists for this user.");
+            throw new RuntimeException("Subject code already exists.");
         }
 
         subject.setUser(user);
@@ -41,7 +39,6 @@ public class SubjectService {
         return subjectRepository.save(subject);
     }
 
-    // Update a user's subject
     public Subject updateSubject(Long id, Long userId, Subject updatedSubject) {
 
         Subject existing = subjectRepository.findByIdAndUserId(id, userId);
@@ -59,7 +56,6 @@ public class SubjectService {
         return subjectRepository.save(existing);
     }
 
-    // Delete a user's subject
     public void deleteSubject(Long id, Long userId) {
 
         Subject subject = subjectRepository.findByIdAndUserId(id, userId);
@@ -70,9 +66,12 @@ public class SubjectService {
 
         subjectRepository.delete(subject);
     }
+
+    @Transactional
     public void deleteAllSubjects(Long userId) {
 
-        subjectRepository.deleteByUserId(userId);
+        List<Subject> subjects = subjectRepository.findByUserId(userId);
 
+        subjectRepository.deleteAll(subjects);
     }
 }
