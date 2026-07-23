@@ -37,33 +37,31 @@ public class RoommateController {
     @PostMapping
     public RoommatePost createPost(@RequestBody RoommatePost roommatePost) {
 
-        if (roommatePost.getUser() != null &&
-                roommatePost.getUser().getId() != null) {
+        try {
 
-            User user = userRepository.findById(
-                    roommatePost.getUser().getId()
-            ).orElseThrow(() ->
-                    new RuntimeException("User not found"));
+            if (roommatePost.getUser() != null &&
+                    roommatePost.getUser().getId() != null) {
 
-            roommatePost.setUser(user);
+                User user = userRepository.findById(roommatePost.getUser().getId())
+                        .orElseThrow(() -> new RuntimeException("User not found"));
 
-            roommatePost.setContactName(user.getFullName());
-            roommatePost.setContactEmail(user.getEmail());
-            roommatePost.setContactPhone(user.getPhone());
+                roommatePost.setUser(user);
+                roommatePost.setContactName(user.getFullName());
+                roommatePost.setContactEmail(user.getEmail());
+                roommatePost.setContactPhone(user.getPhone());
+                roommatePost.setAvatar(user.getProfileImage());
+                roommatePost.setBranch(user.getBranch());
+                roommatePost.setYearOfStudy(user.getYearOfStudy());
+                roommatePost.setDegreeProgram(user.getDegreeProgram());
+            }
 
-            roommatePost.setAvatar(user.getProfileImage());
+            return roommatePostService.createPost(roommatePost);
 
-            roommatePost.setBranch(user.getBranch());
-            roommatePost.setYearOfStudy(user.getYearOfStudy());
-            roommatePost.setDegreeProgram(user.getDegreeProgram());
-
-            // Remove these two lines if User doesn't have skills
-            // roommatePost.setSkills(user.getSkills());
+        } catch (Exception e) {
+            e.printStackTrace();   // <-- IMPORTANT
+            throw e;
         }
-
-        return roommatePostService.createPost(roommatePost);
     }
-
     // ================= UPDATE =================
 
     @PutMapping("/{id}")
