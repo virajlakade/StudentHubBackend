@@ -1,19 +1,17 @@
 package com.viraj.projectbackend.Confessions.model;
 
-
-
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import lombok.*;
+
 import java.time.LocalDateTime;
 import java.util.List;
-import lombok.*;
 
 @Getter
 @Setter
-
+@NoArgsConstructor
 @AllArgsConstructor
 @Builder
-
 @Entity
 @Table(name = "confessions")
 public class Confession {
@@ -33,9 +31,14 @@ public class Confession {
 
     private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "confession",
+    @Transient
+    private boolean liked;
+
+    @OneToMany(
+            mappedBy = "confession",
             cascade = CascadeType.ALL,
-            orphanRemoval = true)
+            orphanRemoval = true
+    )
     @JsonManagedReference
     private List<ConfessionComment> comments;
 
@@ -43,11 +46,4 @@ public class Confession {
     public void prePersist() {
         createdAt = LocalDateTime.now();
     }
-
-    public Confession() {
-    }
-
-
-
-    // getters setters
 }
